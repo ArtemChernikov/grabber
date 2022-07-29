@@ -5,6 +5,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.*;
 import java.util.Properties;
 
 import static org.quartz.JobBuilder.*;
@@ -18,16 +19,26 @@ import static org.quartz.SimpleScheduleBuilder.*;
  * @version 1.0
  */
 public class AlertRabbit {
+    /**
+     * Поле интервал (периодичность выполнения)
+     */
+    private static int interval;
+
     public static void main(String[] args) {
-        try {
+        try (Connection connection = init()) {
             /* Конфигурирование */
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
+            JobDataMap data = new JobDataMap();
+            /* Передаем ссылку на подключение к БД */
+            data.put("connection", connection);
             /* Создание задачи */
-            JobDetail job = newJob(Rabbit.class).build();
+            JobDetail job = newJob(Rabbit.class)
+                    .usingJobData(data)
+                    .build();
             /* Создание расписания */
             SimpleScheduleBuilder times = simpleSchedule()
-                    .withIntervalInSeconds(init())
+                    .withIntervalInSeconds(interval)
                     .repeatForever();
             /* Задача выполняется через триггер */
             Trigger trigger = newTrigger()
@@ -36,36 +47,45 @@ public class AlertRabbit {
                     .build();
             /* Загрузка задачи в планировщик */
             scheduler.scheduleJob(job, trigger);
-        } catch (SchedulerException se) {
+            /* Метод main будет работать 10 секунд */
+            Thread.sleep(10000);
+            /* Закрываем scheduler */
+            scheduler.shutdown();
+        } catch (SchedulerException | InterruptedException | SQLException se) {
             se.printStackTrace();
         }
     }
 
     /**
-     * Метод используется для считывание из файла "rabbit.properties" интервала запуска
-     * Используется метод validate()
+     * Метод используется для считывания из файла "rabbit.properties"
+     * интервала запуска и подключения к базе данных
+     * Используется метод validate(), для валидации интервала запуска
      *
-     * @return - возвращает интервал запуска
+     * @return - возвращает {@link Connection} подключение к БД
+     * @throws SQLException - может выбросить {@link SQLException}
      */
-    public static int init() {
-        int interval = 0;
+    private static Connection init() throws SQLException {
+        Properties properties = new Properties();
         try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
-            Properties properties = new Properties();
             properties.load(in);
+            Class.forName(properties.getProperty("driver-class-name"));
             interval = validate(properties.getProperty("rabbit.interval"));
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return interval;
+        return DriverManager.getConnection(
+                properties.getProperty("url"),
+                properties.getProperty("username"),
+                properties.getProperty("password"));
     }
 
     /**
-     * Метод используется для валидации содержимого файла
+     * Метод используется для валидации содержимого интервала запуска
      *
      * @param interval - интервал в виде строки
      * @return - возвращает интервал в виде числа
      */
-    public static int validate(String interval) {
+    private static int validate(String interval) {
         if ("".equals(interval)) {
             throw new IllegalArgumentException("Укажите интервал запуска!");
         }
@@ -81,9 +101,28 @@ public class AlertRabbit {
      * используется для описания требуемых действий с определенной периодичностью
      */
     public static class Rabbit implements Job {
+        public Rabbit() {
+            System.out.println(hashCode());
+        }
+
+        /**
+         * Метод используется для выполнения задания
+         * 1) Соединяемся с базой данных
+         * 2) Отправляем запрос в базу данных
+         *
+         * @param context - context (условия выполнения)
+         * @throws JobExecutionException - может выбросить {@link JobExecutionException}
+         */
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
             System.out.println("Rabbit runs here ...");
+            Connection connection = (Connection) context.getJobDetail().getJobDataMap().get("connection");
+            try (PreparedStatement ps = connection.prepareStatement("INSERT INTO rabbit (created_date) VALUES(?);")) {
+                ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+                ps.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
