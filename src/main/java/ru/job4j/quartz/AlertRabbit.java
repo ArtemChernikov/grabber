@@ -69,7 +69,7 @@ public class AlertRabbit {
         try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
             properties.load(in);
             Class.forName(properties.getProperty("driver-class-name"));
-            interval = validate(properties.getProperty("rabbit.interval"));
+            interval = intervalValidate(properties.getProperty("rabbit.interval"));
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -85,7 +85,7 @@ public class AlertRabbit {
      * @param interval - интервал в виде строки
      * @return - возвращает интервал в виде числа
      */
-    private static int validate(String interval) {
+    private static int intervalValidate(String interval) {
         if ("".equals(interval)) {
             throw new IllegalArgumentException("Укажите интервал запуска!");
         }
