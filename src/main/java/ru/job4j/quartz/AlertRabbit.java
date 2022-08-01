@@ -19,13 +19,9 @@ import static org.quartz.SimpleScheduleBuilder.*;
  * @version 1.0
  */
 public class AlertRabbit {
-    /**
-     * Поле интервал (периодичность выполнения)
-     */
-    private static int interval;
-
     public static void main(String[] args) {
-        try (Connection connection = init()) {
+        Properties properties = new Properties();
+        try (Connection connection = init(properties)) {
             /* Конфигурирование */
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
@@ -38,7 +34,7 @@ public class AlertRabbit {
                     .build();
             /* Создание расписания */
             SimpleScheduleBuilder times = simpleSchedule()
-                    .withIntervalInSeconds(interval)
+                    .withIntervalInSeconds(getInterval(properties))
                     .repeatForever();
             /* Задача выполняется через триггер */
             Trigger trigger = newTrigger()
@@ -57,26 +53,47 @@ public class AlertRabbit {
     }
 
     /**
-     * Метод используется для считывания из файла "rabbit.properties"
-     * интервала запуска и подключения к базе данных
-     * Используется метод validate(), для валидации интервала запуска
+     * Метод используется для подключения к базе данных
+     * Используется метод loadProperties(), для загрузки {@link Properties}
      *
      * @return - возвращает {@link Connection} подключение к БД
      * @throws SQLException - может выбросить {@link SQLException}
      */
-    private static Connection init() throws SQLException {
-        Properties properties = new Properties();
-        try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
-            properties.load(in);
+    private static Connection init(Properties properties) throws SQLException {
+        try {
+            loadProperties(properties);
             Class.forName(properties.getProperty("driver-class-name"));
-            interval = intervalValidate(properties.getProperty("rabbit.interval"));
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return DriverManager.getConnection(
                 properties.getProperty("url"),
                 properties.getProperty("username"),
                 properties.getProperty("password"));
+    }
+
+    /**
+     * Метод используется для считывания из файла "rabbit.properties" интервала запуска
+     * Используется метод validate(), для валидации интервала запуска
+     *
+     * @param properties - {@link Properties}
+     * @return - возвращает интервал
+     */
+    private static int getInterval(Properties properties) {
+        return intervalValidate(properties.getProperty("rabbit.interval"));
+    }
+
+    /**
+     * Метод используется для загрузки данных из файла "rabbit.properties"
+     *
+     * @param properties - {@link Properties}
+     */
+    private static void loadProperties(Properties properties) {
+        try (InputStream in = AlertRabbit.class.getClassLoader().getResourceAsStream("rabbit.properties")) {
+            properties.load(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
