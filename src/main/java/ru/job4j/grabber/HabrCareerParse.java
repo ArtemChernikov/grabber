@@ -11,15 +11,13 @@ import java.io.IOException;
 public class HabrCareerParse {
     private static final String SOURCE_LINK = "https://career.habr.com";
 
-    private static int page = 1;
-
-    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer?page=%d", SOURCE_LINK, page);
+    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
 
     public static void main(String[] args) throws IOException {
-        Connection connection = Jsoup.connect(PAGE_LINK);
-        Document document = connection.get();
-        Elements rows = document.select(".vacancy-card__inner");
-        while (page++ <= 5) {
+        for (int page = 1; page <= 5; page++) {
+            Connection connection = Jsoup.connect(PAGE_LINK + "?page=" + page);
+            Document document = connection.get();
+            Elements rows = document.select(".vacancy-card__inner");
             rows.forEach(row -> {
                 Element titleElement = row.select(".vacancy-card__title").first();
                 Element linkElement = titleElement.child(0);
