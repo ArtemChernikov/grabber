@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Класс описывает модель парсинга сайта career.habr.com со свойствами <b>SOURCE_LINK</b>, <b>PAGE_LINK</b> и
- * <b>dateTimeParser</b>
+ * Класс описывает модель парсинга сайта career.habr.com со свойствами <b>SOURCE_LINK</b>, <b>PAGE_LINK</b>,
+ * <b>PAGES</b> и <b>dateTimeParser</b>
  *
  * @author ARTEM CHERNIKOV
  * @version 1.0
@@ -27,11 +27,16 @@ public class HabrCareerParse implements Parse {
     /**
      * Поле ссылка сайта с вакансиями java developer
      */
-    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
+    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer?page=", SOURCE_LINK);
+    /**
+     * Поле сколько считываем страниц с вакансиями
+     */
+    public static final int PAGES = 5;
     /**
      * Поле с объектом {@link DateTimeParser} для парсинга даты появления вакансии
      */
     private final DateTimeParser dateTimeParser;
+
 
     public HabrCareerParse(DateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
@@ -39,7 +44,7 @@ public class HabrCareerParse implements Parse {
 
     /**
      * Метод используется для парсинга первых пяти страниц сайта с определенными вакансиями,
-     * дальнейшим созданием объектов {@link Post} и собиранием их в коллекцию {@link ArrayList}
+     * и создания коллекции с каждой вакансией {@link ArrayList<Post>}
      *
      * @param homeLink - ссылка к странице с вакансиями
      * @return - возвращает список
@@ -48,22 +53,31 @@ public class HabrCareerParse implements Parse {
     @Override
     public List<Post> list(String homeLink) throws IOException {
         List<Post> list = new ArrayList<>();
-        int id = 1;
         /* С каждой итерацией открывается следующая страница сайта */
-        for (int page = 1; page <= 5; page++) {
-            Connection connection = Jsoup.connect(homeLink + "?page=" + page);
+        for (int i = 1; i <= PAGES; i++) {
+            Connection connection = Jsoup.connect(homeLink + i);
             Document document = connection.get();
             Elements rows = document.select(".vacancy-card__inner");
             for (Element element : rows) {
-                Element titleElement = element.select(".vacancy-card__title").first();
-                Element linkElement = titleElement.child(0);
-                String vacancyName = titleElement.text();
-                String dateTime = element.select(".vacancy-card__date").first().child(0).attr("datetime");
-                String link = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
-                list.add(new Post(id++, vacancyName, link, retrieveDescription(link), dateTimeParser.parse(dateTime)));
+                list.add(createPost(element));
             }
         }
         return list;
+    }
+
+    /**
+     * Метод используется для парсинга конкретной вакансии сайта в объект {@link Post}
+     *
+     * @param element - элемент страницы
+     * @return - возвращает объект {@link Post}
+     */
+    private Post createPost(Element element) {
+        Element titleElement = element.select(".vacancy-card__title").first();
+        Element linkElement = titleElement.child(0);
+        String vacancyName = titleElement.text();
+        String dateTime = element.select(".vacancy-card__date").first().child(0).attr("datetime");
+        String link = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
+        return new Post(vacancyName, link, retrieveDescription(link), dateTimeParser.parse(dateTime));
     }
 
     /**
