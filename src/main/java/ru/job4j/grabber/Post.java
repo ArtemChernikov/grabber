@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Класс описывает модель поста со свойствами <b>id</b>, <b>title</b>, <b>link</b>,
+ * Класс описывает модель вакансии со свойствами <b>id</b>, <b>title</b>, <b>link</b>,
  * <b>description</b> и <b>created</b>
  *
  * @author ARTEM CHERNIKOV
@@ -18,7 +18,7 @@ public class Post {
     /**
      * Поле название вакансии
      */
-    private String title;
+    private String name;
     /**
      * Поле ссылка на описание вакансии
      */
@@ -32,16 +32,16 @@ public class Post {
      */
     private LocalDateTime created;
 
-    public Post(int id, String title, String link, String description, LocalDateTime created) {
+    public Post(int id, String name, String link, String description, LocalDateTime created) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.link = link;
         this.description = description;
         this.created = created;
     }
 
-    public Post(String title, String link, String description, LocalDateTime created) {
-        this.title = title;
+    public Post(String name, String link, String description, LocalDateTime created) {
+        this.name = name;
         this.link = link;
         this.description = description;
         this.created = created;
@@ -55,12 +55,12 @@ public class Post {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLink() {
@@ -108,7 +108,7 @@ public class Post {
     public String toString() {
         return "Post{"
                 + "id=" + id
-                + ", title='" + title + '\''
+                + ", title='" + name + '\''
                 + ", link='" + link + '\''
                 + ", description='" + description + '\''
                 + ", created=" + created
