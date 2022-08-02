@@ -1,4 +1,4 @@
-CREATE TABLE posts IF NOT EXISTS(
+CREATE TABLE IF NOT EXISTS posts(
 id serial PRIMARY KEY,
 name text,
 text text,
