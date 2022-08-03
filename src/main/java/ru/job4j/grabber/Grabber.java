@@ -21,6 +21,13 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * @version 1.1
  */
 public class Grabber implements Grab {
+    /**
+     * Поле ссылка на страницу с сайтом вакансии
+     */
+    private static final String PAGE_LINK = "https://career.habr.com/vacancies/java_developer?page=";
+    /**
+     * Поле настройки приложения
+     */
     private final Properties cfg = new Properties();
 
     /**
@@ -96,7 +103,7 @@ public class Grabber implements Grab {
             Store store = (Store) map.get("store");
             Parse parse = (Parse) map.get("parse");
             try {
-                List<Post> rsl = parse.list("https://career.habr.com/vacancies/java_developer?page=");
+                List<Post> rsl = parse.list(PAGE_LINK);
                 rsl.forEach(store::save);
             } catch (IOException e) {
                 e.printStackTrace();
