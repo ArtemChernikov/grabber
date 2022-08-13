@@ -35,28 +35,28 @@ public class App {
                     + separator + "5.Выход");
             int rsl = scanner.nextInt();
             switch (rsl) {
-                case 1 -> {
+                case 1:
                     app.createArray(new Random());
                     System.out.println("Введите размер массива");
                     app.randomArray.insert(scanner.nextInt());
-                }
-                case 2 -> {
+                    break;
+                case 2:
                     BubbleSort bubbleSort = new BubbleSort();
                     bubbleSort.sort(app.randomArray);
-                }
-                case 3 -> {
+                    break;
+                case 3:
                     InsertSort insertSort = new InsertSort();
                     insertSort.sort(app.randomArray);
-                }
-                case 4 -> {
+                    break;
+                case 4:
                     MergeSort mergeSort = new MergeSort();
                     mergeSort.sort(app.randomArray);
-                }
-                default -> {
+                    break;
+                default:
                     run = false;
                     scanner.close();
-                }
             }
         }
     }
 }
+
