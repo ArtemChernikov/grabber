@@ -1,11 +1,10 @@
 package ru.job4j.gc;
 
-
 import java.util.Random;
 
 /**
  * Класс демонстрирует работу с разными сборщиками мусора
- * Edit Configuration://
+ *   Edit Configuration:
  * - Serial => -XX:+UseSerialGC
  * - Parallel => -XX:+UseParallelGC
  * - CMS => -XX:+UseConcMarkSweepGC (допуступен до JDK 14)

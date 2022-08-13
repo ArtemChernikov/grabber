@@ -6,7 +6,7 @@ import java.util.Scanner;
 /**
  * Класс для демонстрации работы сборщиков мусора в visualVM
  * на примере сортировок массива
- * Edit Configuration://
+ *   Edit Configuration:
  * - Serial => -XX:+UseSerialGC -Xmx12m -Xms12m -Xlog:gc:log.txt.
  * - Parallel => -XX:+UseParallelGC -Xmx12m -Xms12m -Xlog:gc:log.txt.
  * - G1 => -XX:+UseG1GC -Xmx12m -Xms12m -Xlog:gc:log.txt.
