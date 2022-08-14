@@ -14,13 +14,12 @@ public class Menu {
     public static final String TEXT_OF_POST = "Введите текст";
     public static final String EXIT = "Конец работы";
 
-    public static final String MENU = """
-                Введите 1 для создания поста.
-                Введите 2, чтобы создать определенное количество постов.
-                Введите 3, чтобы показать все посты.
-                Введите 4, чтобы удалить все посты.
-                Введите любое другое число для выхода.
-            """;
+    public static final String MENU = String.format("%s%n%s%n%s%n%s%n%s%n",
+            "1. Введите 1 для создания поста.",
+            "2. Введите 2, чтобы создать определенное количество постов.",
+            "3. Введите 3, чтобы показать все посты.",
+            "4. Введите 4, чтобы удалить все посты.",
+            "5. Введите любое другое число для выхода.");
 
     private static void start(CommentGenerator commentGenerator, Scanner scanner, UserGenerator userGenerator, PostStore postStore) {
         boolean run = true;
