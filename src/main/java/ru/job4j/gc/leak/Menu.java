@@ -33,7 +33,7 @@ public class Menu {
                 String text = scanner.nextLine();
                 userGenerator.generate();
                 commentGenerator.generate();
-                postStore.add(new Post(text, CommentGenerator.getComments()));
+                postStore.add(new Post(text, commentGenerator.getComments()));
             } else if (ADD_MANY_POST == userChoice) {
                 System.out.println(TEXT_OF_POST);
                 String text = scanner.nextLine();
@@ -57,7 +57,7 @@ public class Menu {
                                    UserGenerator userGenerator, PostStore postStore, String text) {
         userGenerator.generate();
         commentGenerator.generate();
-        postStore.add(new Post(text, CommentGenerator.getComments()));
+        postStore.add(new Post(text, commentGenerator.getComments()));
     }
 
     public static void main(String[] args) {
