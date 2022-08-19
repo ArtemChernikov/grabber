@@ -3,7 +3,16 @@ package ru.job4j.cache;
 import java.io.File;
 import java.util.Scanner;
 
+/**
+ * Класс описывает модель приложения клиента
+ *
+ * @author ARTEM CHERNIKOV
+ * @version 1.0
+ */
 public class Emulator {
+    /**
+     * Поле меню
+     */
     public static final String MENU = """
                 1. Выбрать другой файл.
                 2. Загрузить содержимое файла в кэш.
@@ -14,7 +23,19 @@ public class Emulator {
     public static final String ENTER_FILENAME = "Введите имя файла: ";
     public static final String FILE_IS_LOAD = "Содержимое файла загружено.";
     public static final String FILE_CONTENT = "Содержимое файла %s: %n";
+    /**
+     * Поле пункт меню
+     */
+    public static final int MENU_1 = 1;
+    public static final int MENU_2 = 2;
+    public static final int MENU_3 = 3;
+    /**
+     * Поле путь к директории с файлами
+     */
     private String pathDir;
+    /**
+     * Поле имя файла
+     */
     private String fileName;
 
     public String getPathDir() {
@@ -33,6 +54,13 @@ public class Emulator {
         this.fileName = fileName;
     }
 
+    /**
+     * Метод используется для валидации имени файла
+     * (проверяет существует такой файл или нет)
+     *
+     * @param name - имя файла
+     * @return - возвращает имя файла в необходимом формате
+     */
     public String validateFileName(String name) {
         String fullName = String.format("%s%s%s%s", pathDir, File.separator, name, ".txt");
         if (!new File(fullName).exists()) {
@@ -41,6 +69,13 @@ public class Emulator {
         return String.format("%s%s", name, ".txt");
     }
 
+    /**
+     * Метод используется для валидации имени каталога с файлами
+     * (проверяет существует такой каталог или нет)
+     *
+     * @param path - путь к каталогу
+     * @return - возвращает путь к каталогу, если он существует
+     */
     private String validateCacheDir(String path) {
         if (!new File(path).exists()) {
             throw new IllegalArgumentException("Такой директории не существует!");
@@ -61,15 +96,15 @@ public class Emulator {
                 System.out.println(MENU);
                 int rsl = Integer.parseInt(scanner.nextLine());
                 switch (rsl) {
-                    case 1:
+                    case MENU_1:
                         System.out.println(ENTER_FILENAME);
                         emulator.setFileName(emulator.validateFileName(scanner.nextLine()));
                         break;
-                    case 2:
+                    case MENU_2:
                         dirFileCache.put(emulator.fileName, dirFileCache.get(emulator.getFileName()));
                         System.out.println(FILE_IS_LOAD);
                         break;
-                    case 3:
+                    case MENU_3:
                         System.out.printf(FILE_CONTENT, emulator.getFileName());
                         System.out.println(dirFileCache.get(emulator.getFileName()));
                         break;
@@ -79,6 +114,4 @@ public class Emulator {
             }
         }
     }
-
-
 }
