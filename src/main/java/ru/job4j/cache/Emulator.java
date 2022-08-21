@@ -26,9 +26,9 @@ public class Emulator {
     /**
      * Поле пункт меню
      */
-    public static final int MENU_1 = 1;
-    public static final int MENU_2 = 2;
-    public static final int MENU_3 = 3;
+    public static final int CHANGE_FILE = 1;
+    public static final int LOAD_FILE = 2;
+    public static final int GET_CACHE = 3;
     /**
      * Поле путь к директории с файлами
      */
@@ -96,20 +96,21 @@ public class Emulator {
                 System.out.println(MENU);
                 int rsl = Integer.parseInt(scanner.nextLine());
                 switch (rsl) {
-                    case MENU_1:
+                    case CHANGE_FILE -> {
                         System.out.println(ENTER_FILENAME);
                         emulator.setFileName(emulator.validateFileName(scanner.nextLine()));
-                        break;
-                    case MENU_2:
+                    }
+                    case LOAD_FILE -> {
                         dirFileCache.put(emulator.fileName, dirFileCache.get(emulator.getFileName()));
                         System.out.println(FILE_IS_LOAD);
-                        break;
-                    case MENU_3:
+                    }
+                    case GET_CACHE -> {
                         System.out.printf(FILE_CONTENT, emulator.getFileName());
                         System.out.println(dirFileCache.get(emulator.getFileName()));
-                        break;
-                    default:
+                    }
+                    default ->  {
                         run = false;
+                    }
                 }
             }
         }
