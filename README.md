@@ -20,8 +20,8 @@
 - Git
 
 ## Сборка и запуск<br>
-для сборки `mvn install`<br>
-для запуска`java -jar target/job4j_grabber-1.0-jar-with-dependencies.jar`
+- для сборки `mvn install`<br>
+- для запуска`java -jar target/job4j_grabber-1.0-jar-with-dependencies.jar`
 
 ## Как использовать<br>
 Использовать для поиска Java вакансий на сайтах
