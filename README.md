@@ -13,7 +13,7 @@
 
 ## Инструменты
 - Java 17
-- PostgreSql
+- PostgreSQL
 - JDBC
 - Liquibase
 - Maven
