@@ -17,6 +17,7 @@
 - Jsoup
 - JDBC
 - Liquibase
+- log4j + slf4j
 - Maven
 - Git
 
