@@ -14,6 +14,7 @@
 ## Инструменты
 - Java 17
 - PostgreSQL
+- Jsoup
 - JDBC
 - Liquibase
 - Maven
